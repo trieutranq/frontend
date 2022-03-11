@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Button, Image, SafeAreaView, TouchableOpacity } from 'react-native';
 import { Camera } from 'expo-camera';
 import axios from 'axios';
-
+// cho trieu ngu
 // https://youtu.be/Y8OEWhO1qoI
 
 export default function App() {
