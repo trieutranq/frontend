@@ -11,7 +11,8 @@ export default function App() {
   const [camera, setCamera] = useState(null);
   const [image_uri, setImageURI] = useState(null);
   const [image_base64, setImageB64] = useState(null);
-  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [base64_code, setBase64] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.front);
 
   useEffect(() => {
     (async () => {
@@ -37,7 +38,7 @@ export default function App() {
       formdata.append('uri', data.uri)
       formdata.append('base64', data.base64)
 
-      const res = await fetch("http://192.168.1.3:8000/", {
+      const res = await fetch("http://192.168.1.10:8000/", {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
@@ -48,19 +49,28 @@ export default function App() {
         .then(res => { console.log("Sent") })
         .catch(res => { console.log('Error') })
 
-      // const res = await axios(
-      //   {
-      //     url: "http://192.168.1.3:8000/",
-      //     headers: {
-      //       'Accept': 'application/json',
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //     method: "POST",
-      //     body: formdata,
-      //   }).catch(res => { console.log('Error') })
-      // await axios.post('http://192.168.1.3:8000/', formdata)
+
     }
   }
+  const Generate = async () => {
+
+    const res = await fetch('http://192.168.1.10:8000/predict', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/string',
+        'Content-Type': 'application/string',
+      },
+    })
+      .then((response) => {
+        return response.text();
+      }).then((data) => {
+        // console.log(JSON.parse(data))\
+        setBase64(data)
+
+      })
+
+  }
+
   if (hasCameraPermission === false) {
     return <Text>No access to camera</Text>;
   }
@@ -85,7 +95,10 @@ export default function App() {
         }}>
       </Button>
       <Button title="Take Picture" onPress={() => takePicture()} />
-      {image_uri && <Image source={{ uri: image_uri }} style={{ flex: 1 }} />}
+      <Button title="Generate" onPress={() => Generate()} />
+      {/* image_uri && */}
+      {<Image source={{ uri: 'data:image/png;base64,' + base64_code }} style={{ flex: 1 }} />}
+
     </View>
   );
 }
